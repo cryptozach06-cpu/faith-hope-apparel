@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logoPrimary from "@/assets/logo-primary.svg";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,8 +20,8 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="text-2xl font-bold text-foreground hover:text-accent transition-colors">
-            Faith & Hope Apparel
+          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <img src={logoPrimary} alt="RedeemWear Clothing" className="h-12" />
           </Link>
 
           {/* Desktop Navigation */}

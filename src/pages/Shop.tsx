@@ -22,8 +22,8 @@ const Shop = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Shop All Products</h1>
-          <p className="text-xl text-muted-foreground">Premium Christian apparel for believers worldwide</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 font-montserrat">Shop</h1>
+          <p className="text-xl text-muted-foreground font-inter">Premium Christian streetwear designed for the modern believer</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

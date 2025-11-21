@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Youtube } from "lucide-react";
+import logoSecondary from "@/assets/logo-secondary.svg";
 
 export const Footer = () => {
   return (
@@ -8,9 +9,10 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Faith & Hope Apparel</h3>
-            <p className="text-primary-foreground/80">
-              Wear Your Faith. Inspire the World.
+            <img src={logoSecondary} alt="RedeemWear" className="h-16 w-16 mb-4" />
+            <h3 className="text-xl font-bold mb-4 font-montserrat">RedeemWear Clothing</h3>
+            <p className="text-primary-foreground/80 font-inter">
+              Modern Christian streetwear designed with purpose.
             </p>
           </div>
 
@@ -64,7 +66,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; {new Date().getFullYear()} Faith & Hope Apparel. All rights reserved.</p>
+          <p className="font-inter">&copy; {new Date().getFullYear()} RedeemWear Clothing. All rights reserved.</p>
         </div>
       </div>
     </footer>

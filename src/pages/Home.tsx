@@ -59,17 +59,17 @@ const Home = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight"
+            className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight font-montserrat"
           >
-            Wear Your Faith.
+            Faith Redeemed. Style Defined.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl mb-8 text-primary-foreground/90"
+            className="text-xl md:text-2xl mb-8 text-primary-foreground/90 font-inter"
           >
-            Christian Clothing Designed With Purpose
+            Premium Christian Streetwear for the Modern Believer
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -95,8 +95,8 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Collections</h2>
-            <p className="text-xl text-muted-foreground">Discover faith-inspired designs for every believer</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 font-montserrat">Our Collections</h2>
+            <p className="text-xl text-muted-foreground font-inter">Modern faith-inspired designs for every believer</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -136,8 +136,8 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Products</h2>
-            <p className="text-xl text-muted-foreground">Bold statements of faith for everyday wear</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 font-montserrat">Featured Products</h2>
+            <p className="text-xl text-muted-foreground font-inter">Premium streetwear with purpose</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -176,11 +176,11 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Mission</h2>
-              <p className="text-xl leading-relaxed mb-8 text-primary-foreground/90">
-                Faith & Hope Apparel is a Christian clothing brand dedicated to glorifying God through
-                meaningful, scripture-inspired designs. Our mission is to create wearable testimonies that
-                shine His light wherever you go.
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 font-montserrat">Our Mission</h2>
+              <p className="text-xl leading-relaxed mb-8 text-primary-foreground/90 font-inter">
+                RedeemWear Clothing is a Christian streetwear brand dedicated to creating modern, 
+                premium apparel that celebrates faith. We design wearable testimonies that inspire 
+                conversations and shine God's light in everyday life.
               </p>
               <Link to="/about">
                 <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
@@ -202,8 +202,8 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Lookbook</h2>
-            <p className="text-xl text-muted-foreground">Style inspiration for believers worldwide</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 font-montserrat">Lookbook</h2>
+            <p className="text-xl text-muted-foreground font-inter">Style inspiration for believers worldwide</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
