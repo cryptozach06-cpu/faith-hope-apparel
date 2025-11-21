@@ -47,9 +47,9 @@ const Contact = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Contact Us</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Have questions or prayer requests? We'd love to hear from you.
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-montserrat">Get In Touch</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-inter">
+            Have questions? We'd love to hear from you.
           </p>
         </motion.div>
 

@@ -52,10 +52,10 @@ const Collections = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Our Collections</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover our curated collections of faith-inspired apparel, each designed to help you
-            share your testimony and inspire others.
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-montserrat">Collections</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-inter">
+            Curated collections of modern faith-inspired streetwear, designed to help you 
+            share your faith with style.
           </p>
         </motion.div>
 
