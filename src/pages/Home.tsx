@@ -3,31 +3,12 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { Card } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { mockInventory } from "@/data/inventory";
 
 const Home = () => {
-  const featuredProducts = [
-    {
-      name: "Jesus Saves Tee",
-      price: "₱899",
-      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=800&fit=crop"
-    },
-    {
-      name: "Faith Over Fear Hoodie",
-      price: "₱1,499",
-      image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=800&fit=crop"
-    },
-    {
-      name: "God Is Good Tee",
-      price: "₱899",
-      image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&h=800&fit=crop"
-    },
-    {
-      name: "Blessed Cap",
-      price: "₱599",
-      image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&h=800&fit=crop"
-    },
-  ];
+  const navigate = useNavigate();
+  const featuredProducts = mockInventory.slice(0, 4);
 
   const collections = [
     {
@@ -61,7 +42,7 @@ const Home = () => {
             transition={{ duration: 0.8 }}
             className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight font-montserrat"
           >
-            Faith Redeemed. Style Defined.
+            Clothing that Proclaims Christ
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -69,7 +50,7 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl mb-8 text-primary-foreground/90 font-inter"
           >
-            Premium Christian Streetwear for the Modern Believer
+            Wear the Word. Represent Jesus. A portion of every purchase supports global missions and Bible distribution.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -143,9 +124,10 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product, index) => (
               <ProductCard
-                key={product.name}
-                {...product}
+                key={product.id}
+                product={product}
                 index={index}
+                onClick={() => navigate(`/product/${product.id}`)}
               />
             ))}
           </div>
