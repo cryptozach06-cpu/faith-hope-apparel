@@ -1,17 +1,19 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/ProductCard";
+import { mockInventory } from "@/data/inventory";
+import { Button } from "@/components/ui/button";
 
 const Shop = () => {
-  const products = [
-    { name: "Jesus Saves Tee", price: "₱899", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=800&fit=crop" },
-    { name: "Faith Over Fear Hoodie", price: "₱1,499", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=800&fit=crop" },
-    { name: "God Is Greater Sweatshirt", price: "₱1,299", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&h=800&fit=crop" },
-    { name: "Blessed Cap", price: "₱599", image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&h=800&fit=crop" },
-    { name: "Chosen Tee", price: "₱899", image: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=800&h=800&fit=crop" },
-    { name: "Grace & Truth Hoodie", price: "₱1,499", image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=800&h=800&fit=crop" },
-    { name: "Armor of God Tee", price: "₱899", image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=800&h=800&fit=crop" },
-    { name: "Hope Anchor Sweatshirt", price: "₱1,299", image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&h=800&fit=crop" },
-  ];
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  
+  const categories = ["All", "T-Shirts", "Hoodies", "Caps", "Accessories"];
+  
+  const filteredProducts = selectedCategory === "All" 
+    ? mockInventory 
+    : mockInventory.filter(p => p.category === selectedCategory);
 
   return (
     <div className="min-h-screen py-16">
@@ -23,15 +25,32 @@ const Shop = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-4 font-montserrat">Shop</h1>
-          <p className="text-xl text-muted-foreground font-inter">Premium Christian streetwear designed for the modern believer</p>
+          <p className="text-xl text-muted-foreground font-inter">
+            Premium Christian streetwear designed for the modern believer
+          </p>
         </motion.div>
 
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map(cat => (
+            <Button
+              key={cat}
+              variant={selectedCategory === cat ? "default" : "outline"}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </Button>
+          ))}
+        </div>
+
+        {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product, index) => (
+          {filteredProducts.map((product, index) => (
             <ProductCard
-              key={product.name}
-              {...product}
+              key={product.id}
+              product={product}
               index={index}
+              onClick={() => navigate(`/product/${product.id}`)}
             />
           ))}
         </div>
