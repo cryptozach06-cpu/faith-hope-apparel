@@ -6,7 +6,13 @@ verify_jwt = false
 [functions.paypal-capture-order]
 verify_jwt = false
 
-[functions.pod-submit-order]
+[functions.pod-route-order]
+verify_jwt = false
+
+[functions.webhook-printful]
+verify_jwt = false
+
+[functions.track]
 verify_jwt = false
 
 [functions.generate-description]

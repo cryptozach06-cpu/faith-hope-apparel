@@ -34,9 +34,10 @@ const Cart = () => {
     try {
       const { data, error } = await supabase.functions.invoke('paypal-capture-order', {
         body: {
-          orderId: paypalOrderId,
-          customerEmail: customer.email,
-          items: cart,
+          orderID: paypalOrderId,
+          cart: cart,
+          payer: { email_address: customer.email },
+          shipping: {}
         },
       });
 
@@ -74,16 +75,18 @@ const Cart = () => {
     try {
       const { data, error } = await supabase.functions.invoke('paypal-create-order', {
         body: {
-          items: cart,
-          customerEmail: customer.email,
+          cart: cart,
+          return_url: `${window.location.origin}/cart?success=true`,
+          cancel_url: `${window.location.origin}/cart?canceled=true`
         },
       });
 
       if (error) throw error;
 
       // Redirect to PayPal
-      if (data.approveUrl) {
-        window.location.href = data.approveUrl;
+      const approveLink = data.links?.find((link: any) => link.rel === 'approve');
+      if (approveLink) {
+        window.location.href = approveLink.href;
       }
     } catch (error: any) {
       console.error('Checkout error:', error);

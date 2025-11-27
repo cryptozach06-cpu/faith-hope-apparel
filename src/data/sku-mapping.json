@@ -1,0 +1,17 @@
+{
+  "RWCT001": {
+    "PRINTFUL": {
+      "variant_id": 12345
+    }
+  },
+  "RWCH001": {
+    "PRINTFUL": {
+      "variant_id": 22345
+    }
+  },
+  "RWCC001": {
+    "PRINTFUL": {
+      "variant_id": 32345
+    }
+  }
+}
