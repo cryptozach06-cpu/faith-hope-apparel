@@ -20,7 +20,13 @@ export type Database = {
           customer_email: string | null
           id: number
           items: Json | null
-          stripe_session_id: string | null
+          paypal_order_id: string | null
+          pod_order_id: string | null
+          pod_provider: string | null
+          pod_status: string | null
+          pod_tracking: string | null
+          redeem_tracking_code: string | null
+          status: string | null
           total: number | null
         }
         Insert: {
@@ -28,7 +34,13 @@ export type Database = {
           customer_email?: string | null
           id?: number
           items?: Json | null
-          stripe_session_id?: string | null
+          paypal_order_id?: string | null
+          pod_order_id?: string | null
+          pod_provider?: string | null
+          pod_status?: string | null
+          pod_tracking?: string | null
+          redeem_tracking_code?: string | null
+          status?: string | null
           total?: number | null
         }
         Update: {
@@ -36,7 +48,13 @@ export type Database = {
           customer_email?: string | null
           id?: number
           items?: Json | null
-          stripe_session_id?: string | null
+          paypal_order_id?: string | null
+          pod_order_id?: string | null
+          pod_provider?: string | null
+          pod_status?: string | null
+          pod_tracking?: string | null
+          redeem_tracking_code?: string | null
+          status?: string | null
           total?: number | null
         }
         Relationships: []
@@ -52,7 +70,7 @@ export type Database = {
           name: string
           price_usd: number
           sizes: string[] | null
-          sku: string
+          sku: string | null
           stock: number | null
         }
         Insert: {
@@ -65,7 +83,7 @@ export type Database = {
           name: string
           price_usd: number
           sizes?: string[] | null
-          sku: string
+          sku?: string | null
           stock?: number | null
         }
         Update: {
@@ -78,7 +96,7 @@ export type Database = {
           name?: string
           price_usd?: number
           sizes?: string[] | null
-          sku?: string
+          sku?: string | null
           stock?: number | null
         }
         Relationships: []
