@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          created_at: string | null
+          customer_email: string | null
+          id: number
+          items: Json | null
+          stripe_session_id: string | null
+          total: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_email?: string | null
+          id?: number
+          items?: Json | null
+          stripe_session_id?: string | null
+          total?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_email?: string | null
+          id?: number
+          items?: Json | null
+          stripe_session_id?: string | null
+          total?: number | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          colors: string[] | null
+          created_at: string | null
+          description: string | null
+          id: number
+          images: string[] | null
+          name: string
+          price_usd: number
+          sizes: string[] | null
+          sku: string
+          stock: number | null
+        }
+        Insert: {
+          category: string
+          colors?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          images?: string[] | null
+          name: string
+          price_usd: number
+          sizes?: string[] | null
+          sku: string
+          stock?: number | null
+        }
+        Update: {
+          category?: string
+          colors?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          images?: string[] | null
+          name?: string
+          price_usd?: number
+          sizes?: string[] | null
+          sku?: string
+          stock?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          is_admin: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id: string
+          is_admin?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_admin?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
