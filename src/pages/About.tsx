@@ -31,7 +31,7 @@ const About = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-montserrat">About RedeemWear</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-montserrat">About RedeemedWearClothing</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-inter">
             Modern Christian streetwear designed with purpose and passion. We believe your style 
             can be a powerful testimony of faith.
@@ -48,7 +48,7 @@ const About = () => {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 font-montserrat">Our Story</h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4 font-inter">
-              RedeemWear Clothing was founded on a vision: to merge modern streetwear aesthetics 
+              RedeemedWearClothing was founded on a vision: to merge modern streetwear aesthetics 
               with timeless faith. We create premium apparel that looks exceptional while carrying 
               a powerful message.
             </p>
@@ -115,7 +115,7 @@ const About = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-6 font-montserrat">Our Mission</h2>
           <p className="text-xl leading-relaxed max-w-3xl mx-auto font-inter">
-            RedeemWear Clothing is dedicated to creating modern, premium apparel that celebrates faith. 
+            RedeemedWearClothing is dedicated to creating modern, premium apparel that celebrates faith. 
             We design wearable testimonies that inspire conversations and shine God's light in everyday 
             life—merging style with substance for the next generation of believers.
           </p>
