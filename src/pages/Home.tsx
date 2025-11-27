@@ -160,7 +160,7 @@ const Home = () => {
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-6 font-montserrat">Our Mission</h2>
               <p className="text-xl leading-relaxed mb-8 text-primary-foreground/90 font-inter">
-                RedeemWear Clothing is a Christian streetwear brand dedicated to creating modern, 
+                RedeemedWearClothing is a Christian streetwear brand dedicated to creating modern, 
                 premium apparel that celebrates faith. We design wearable testimonies that inspire 
                 conversations and shine God's light in everyday life.
               </p>

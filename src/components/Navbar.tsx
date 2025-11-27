@@ -28,7 +28,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <img src={logoPrimary} alt="RedeemWear Clothing" className="h-12" />
+            <img src={logoPrimary} alt="RedeemedWearClothing" className="h-12" />
           </Link>
 
           {/* Desktop Navigation */}

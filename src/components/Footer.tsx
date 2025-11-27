@@ -9,8 +9,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <img src={logoSecondary} alt="RedeemWear" className="h-16 w-16 mb-4" />
-            <h3 className="text-xl font-bold mb-4 font-montserrat">RedeemWear Clothing</h3>
+            <img src={logoSecondary} alt="RedeemedWearClothing" className="h-16 w-16 mb-4" />
+            <h3 className="text-xl font-bold mb-4 font-montserrat">RedeemedWearClothing</h3>
             <p className="text-primary-foreground/80 font-inter">
               Modern Christian streetwear designed with purpose.
             </p>
@@ -66,7 +66,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/60">
-          <p className="font-inter">&copy; {new Date().getFullYear()} RedeemWear Clothing. All rights reserved.</p>
+          <p className="font-inter">&copy; {new Date().getFullYear()} RedeemedWearClothing. All rights reserved.</p>
         </div>
       </div>
     </footer>
