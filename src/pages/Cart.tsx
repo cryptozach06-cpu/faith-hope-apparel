@@ -1,39 +1,99 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { cart, updateQty, removeFromCart, clearCart } = useCart();
   const { formatPrice } = useCurrency();
   const [customer, setCustomer] = useState({ name: "", email: "" });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-  const handlePlaceOrder = () => {
-    if (!customer.name || !customer.email) {
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const paypalOrderId = searchParams.get('token');
+    
+    if (success === 'true' && paypalOrderId) {
+      handlePayPalReturn(paypalOrderId);
+    }
+  }, [searchParams]);
+
+  const handlePayPalReturn = async (paypalOrderId: string) => {
+    setIsProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('paypal-capture-order', {
+        body: {
+          orderId: paypalOrderId,
+          customerEmail: customer.email,
+          items: cart,
+        },
+      });
+
+      if (error) throw error;
+
+      clearCart();
+      toast({
+        title: "Payment successful!",
+        description: "Your order has been placed and will be processed shortly.",
+      });
+      navigate('/');
+    } catch (error: any) {
+      console.error('Payment capture error:', error);
+      toast({
+        title: "Payment processing failed",
+        description: error.message || "Please contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!customer.email) {
       toast({
         title: "Missing information",
-        description: "Please enter your name and email",
+        description: "Please enter your email",
         variant: "destructive",
       });
       return;
     }
 
-    const orderId = `ORD-${Date.now()}`;
-    clearCart();
-    toast({
-      title: "Order placed successfully!",
-      description: `Order ${orderId} - Thank you for your purchase!`,
-    });
-    navigate("/");
+    setIsProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('paypal-create-order', {
+        body: {
+          items: cart,
+          customerEmail: customer.email,
+        },
+      });
+
+      if (error) throw error;
+
+      // Redirect to PayPal
+      if (data.approveUrl) {
+        window.location.href = data.approveUrl;
+      }
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Checkout failed",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -111,23 +171,35 @@ const Cart = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                  <Input
-                    placeholder="Full name"
-                    value={customer.name}
-                    onChange={e => setCustomer(c => ({ ...c, name: e.target.value }))}
-                  />
+                <div className="space-y-3 mb-4">
                   <Input
                     type="email"
                     placeholder="Email"
                     value={customer.email}
                     onChange={e => setCustomer(c => ({ ...c, email: e.target.value }))}
+                    disabled={isProcessing}
                   />
                 </div>
 
-                <Button size="lg" className="w-full" onClick={handlePlaceOrder}>
-                  Place Order
+                <Button 
+                  size="lg" 
+                  className="w-full" 
+                  onClick={handleCheckout}
+                  disabled={isProcessing || cart.length === 0}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Checkout with PayPal'
+                  )}
                 </Button>
+                
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  You'll be redirected to PayPal to complete your purchase
+                </p>
               </div>
             </div>
           )}

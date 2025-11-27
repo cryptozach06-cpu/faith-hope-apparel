@@ -1,1 +1,19 @@
 project_id = "ndvuxiynbrklugcunxts"
+
+[functions.paypal-create-order]
+verify_jwt = false
+
+[functions.paypal-capture-order]
+verify_jwt = false
+
+[functions.pod-submit-order]
+verify_jwt = false
+
+[functions.generate-description]
+verify_jwt = false
+
+[functions.monitor]
+verify_jwt = false
+
+[functions.shipping-rate]
+verify_jwt = false
