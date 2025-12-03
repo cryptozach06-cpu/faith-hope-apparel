@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Youtube } from "lucide-react";
-import logoSecondary from "@/assets/logo-secondary.svg";
+import logoFooterIcon from "@/assets/logo-footer-icon.png";
+import logoFooterName from "@/assets/logo-footer-name.jpg";
 
 export const Footer = () => {
   return (
@@ -9,8 +10,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <img src={logoSecondary} alt="RedeemedWearClothing" className="h-16 w-16 mb-4" />
-            <h3 className="text-xl font-bold mb-4 font-montserrat">RedeemedWearClothing</h3>
+            <img src={logoFooterIcon} alt="Redeem Wear Clothing" className="h-16 w-auto mb-4" />
+            <img src={logoFooterName} alt="Redeem Wear Clothing" className="h-8 w-auto mb-4" />
             <p className="text-primary-foreground/80 font-inter">
               Modern Christian streetwear designed with purpose.
             </p>

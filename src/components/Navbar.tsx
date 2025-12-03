@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTheme } from "next-themes";
-import logoPrimary from "@/assets/logo-primary.svg";
+import logoNavbar from "@/assets/logo-navbar.jpg";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +28,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <img src={logoPrimary} alt="RedeemedWearClothing" className="h-12" />
+            <img src={logoNavbar} alt="Redeem Wear Clothing" className="h-12" />
           </Link>
 
           {/* Desktop Navigation */}
