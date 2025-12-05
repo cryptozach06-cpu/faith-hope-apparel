@@ -5,20 +5,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-function hexToBuffer(hex: string): ArrayBuffer {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
-  }
-  return bytes.buffer;
-}
-
-async function computeHmacHex(secretBuf: ArrayBuffer, rawBody: string): Promise<string> {
+// Printful v1 uses HMAC SHA1 for signature verification
+async function computeHmacSha1(secret: string, rawBody: string): Promise<string> {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw',
-    secretBuf,
-    { name: 'HMAC', hash: 'SHA-256' },
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-1' },
     false,
     ['sign']
   );
@@ -70,14 +63,14 @@ Deno.serve(async (req) => {
 
   try {
     const rawBody = await req.text();
-    const providedSig = req.headers.get('x-pf-webhook-signature') || '';
+    // Printful v1 uses X-Printful-Signature header
+    const providedSig = req.headers.get('X-Printful-Signature') || req.headers.get('x-printful-signature') || '';
     
-    // Verify webhook signature
-    const webhookSecret = Deno.env.get('PRINTFUL_WEBHOOK_SECRET_HEX');
+    // Verify webhook signature using HMAC SHA1
+    const webhookSecret = Deno.env.get('PRINTFUL_WEBHOOK_SECRET');
     if (webhookSecret) {
       try {
-        const secretBuf = hexToBuffer(webhookSecret.trim());
-        const computed = await computeHmacHex(secretBuf, rawBody);
+        const computed = await computeHmacSha1(webhookSecret, rawBody);
         
         if (!providedSig || computed !== providedSig) {
           console.error('Invalid Printful webhook signature', { providedSig, computed });
@@ -86,6 +79,7 @@ Deno.serve(async (req) => {
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
+        console.log('Printful webhook signature verified successfully');
       } catch (error) {
         console.error('Signature verify error:', error);
         return new Response(
@@ -94,7 +88,7 @@ Deno.serve(async (req) => {
         );
       }
     } else {
-      console.warn('PRINTFUL_WEBHOOK_SECRET_HEX not set — webhook signature NOT verified');
+      console.warn('PRINTFUL_WEBHOOK_SECRET not set — webhook signature NOT verified');
     }
 
     const event = JSON.parse(rawBody);
