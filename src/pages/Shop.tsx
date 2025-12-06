@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/ProductCard";
 import { mockInventory } from "@/data/inventory";
@@ -7,9 +7,19 @@ import { Button } from "@/components/ui/button";
 
 const Shop = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   
   const categories = ["All", "T-Shirts", "Hoodies", "Caps", "Accessories"];
+  
+  // Set category from URL param on mount
+  useEffect(() => {
+    if (categoryParam && categories.includes(categoryParam)) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [categoryParam]);
   
   const filteredProducts = selectedCategory === "All" 
     ? mockInventory 

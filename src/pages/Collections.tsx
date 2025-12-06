@@ -1,47 +1,60 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const Collections = () => {
+  const navigate = useNavigate();
+  
   const collections = [
     {
       name: "Scripture Tees",
       description: "Bold scripture verses on premium cotton tees",
       image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=600&fit=crop",
-      items: 12
+      items: 12,
+      category: "T-Shirts"
     },
     {
       name: "Faith Hoodies",
       description: "Cozy hoodies with powerful faith messages",
       image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=600&fit=crop",
-      items: 8
+      items: 8,
+      category: "Hoodies"
     },
     {
       name: "Christian Accessories",
       description: "Caps, bags, and more to complete your look",
       image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=600&fit=crop",
-      items: 15
+      items: 15,
+      category: "Accessories"
     },
     {
       name: "Worship Collection",
       description: "Designed for those who lead worship and praise",
       image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=800&h=600&fit=crop",
-      items: 10
+      items: 10,
+      category: "All"
     },
     {
       name: "Youth Line",
       description: "Fresh designs for the next generation of believers",
       image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=600&fit=crop",
-      items: 14
+      items: 14,
+      category: "All"
     },
     {
       name: "Seasonal Specials",
       description: "Limited edition designs for special occasions",
       image: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=800&h=600&fit=crop",
-      items: 6
+      items: 6,
+      category: "All"
     },
   ];
+
+  const handleViewCollection = (category: string) => {
+    navigate(`/shop?category=${encodeURIComponent(category)}`);
+  };
 
   return (
     <div className="min-h-screen py-16">
@@ -82,7 +95,10 @@ const Collections = () => {
                   </div>
                 </div>
                 <div className="p-6">
-                  <Button className="w-full group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                  <Button 
+                    className="w-full group-hover:bg-accent group-hover:text-accent-foreground transition-colors"
+                    onClick={() => handleViewCollection(collection.category)}
+                  >
                     View Collection <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
