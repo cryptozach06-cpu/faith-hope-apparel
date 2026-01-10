@@ -22,8 +22,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Test API by fetching store info (read-only, safe operation)
-    const response = await fetch('https://api.printful.com/store', {
+    // Test API by fetching sync products (uses store products scope)
+    const response = await fetch('https://api.printful.com/sync/products?limit=1', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${printfulKey}`,
@@ -35,15 +35,15 @@ Deno.serve(async (req) => {
     
     console.log('Printful API response:', JSON.stringify(data));
 
-    if (response.ok && data.result) {
+    if (response.ok) {
+      const products = data.result || [];
       return new Response(
         JSON.stringify({
-          action: 'Retrieve store info',
+          action: 'Retrieve sync products',
           status: 'SUCCESS',
           http_status: response.status,
-          store_id: data.result.id,
-          store_name: data.result.name,
-          store_type: data.result.type,
+          product_count: products.length,
+          products: products.slice(0, 3).map((p: any) => ({ id: p.id, name: p.name })),
           response: data
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     } else {
       return new Response(
         JSON.stringify({
-          action: 'Retrieve store info',
+          action: 'Retrieve sync products',
           status: 'FAILED',
           http_status: response.status,
           error: data.error?.message || data.message || 'Unknown error',
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
     console.error('Printful test error:', error);
     return new Response(
       JSON.stringify({ 
-        action: 'Retrieve store info',
+        action: 'Retrieve sync products',
         status: 'FAILED',
         error: error instanceof Error ? error.message : 'Unknown error'
       }),
