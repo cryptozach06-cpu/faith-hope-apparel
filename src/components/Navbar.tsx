@@ -1,17 +1,31 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X, ShoppingCart, Moon, Sun } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, ShoppingCart, Moon, Sun, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "next-themes";
 import logoNavbar from "@/assets/logo-navbar.jpg";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { cartCount } = useCart();
   const { currency, setCurrency } = useCurrency();
+  const { user, isAdmin, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const navLinks = [
     { to: "/", label: "Home" },
@@ -72,9 +86,33 @@ export const Navbar = () => {
               </Button>
             </Link>
 
-            <Link to="/admin">
-              <Button variant="outline" size="sm">Admin</Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background">
+                  <DropdownMenuItem className="text-muted-foreground text-xs">
+                    {user.email}
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      Admin Dashboard
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm">Sign In</Button>
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -104,9 +142,23 @@ export const Navbar = () => {
                 Cart ({cartCount})
               </Button>
             </Link>
-            <Link to="/admin" onClick={() => setIsOpen(false)} className="block py-2">
-              <Button variant="outline" className="w-full">Admin</Button>
-            </Link>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setIsOpen(false)} className="block py-2">
+                    <Button variant="outline" className="w-full">Admin</Button>
+                  </Link>
+                )}
+                <Button variant="outline" className="w-full" onClick={() => { handleSignOut(); setIsOpen(false); }}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth" onClick={() => setIsOpen(false)} className="block py-2">
+                <Button variant="outline" className="w-full">Sign In</Button>
+              </Link>
+            )}
           </nav>
         )}
       </div>
