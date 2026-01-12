@@ -24,38 +24,41 @@ const getAccessToken = async () => {
   return data.access_token;
 };
 
+// Send order confirmation email using Mailgun (customer_email passed in-memory, not stored in DB)
 const sendOrderConfirmation = async (toEmail: string, orderRow: any) => {
-  const sendgridKey = Deno.env.get('SENDGRID_API_KEY');
-  if (!sendgridKey) return;
+  const mailgunKey = Deno.env.get('MAILGUN_API_KEY');
+  const mailgunDomain = Deno.env.get('MAILGUN_DOMAIN');
+  if (!mailgunKey || !mailgunDomain || !toEmail) {
+    console.log('Skipping email - missing config or email address');
+    return;
+  }
 
-  const supportEmail = Deno.env.get('SUPPORT_EMAIL') || 'support@redeemedwearclothing.com';
+  const supportEmail = 'support@redeemedwearclothing.com';
   
-  const msg = {
-    personalizations: [{
-      to: [{ email: toEmail || supportEmail }],
-      subject: `RedeemedWear Order Confirmation — ${orderRow.redeem_tracking_code}`,
-    }],
-    from: { email: supportEmail },
-    content: [{
-      type: 'text/html',
-      value: `<p>Thank you for your order. Your RedeemedWear order code is <strong>${orderRow.redeem_tracking_code}</strong>.</p>
-              <p>We will notify you when your order ships. For questions, reply to ${supportEmail}.</p>
-              <pre>${JSON.stringify(orderRow.items, null, 2)}</pre>`
-    }]
-  };
+  const formData = new FormData();
+  formData.append('from', `RedeemedWear <noreply@${mailgunDomain}>`);
+  formData.append('to', toEmail);
+  formData.append('subject', `Order Confirmation — ${orderRow.redeem_tracking_code}`);
+  formData.append('html', `
+    <p>Thank you for your order!</p>
+    <p>Your RedeemedWear order code is <strong>${orderRow.redeem_tracking_code}</strong>.</p>
+    <p>We will notify you when your order ships. For questions, contact ${supportEmail}.</p>
+    <h3>Order Details:</h3>
+    <pre>${JSON.stringify(orderRow.items, null, 2)}</pre>
+  `);
 
   try {
-    await fetch('https://api.sendgrid.com/v3/mail/send', {
+    const response = await fetch(`https://api.mailgun.net/v3/${mailgunDomain}/messages`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${sendgridKey}`,
-        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(`api:${mailgunKey}`)}`,
       },
-      body: JSON.stringify(msg),
+      body: formData,
     });
-    console.log('Order confirmation email sent');
+    const result = await response.text();
+    console.log('Order confirmation email sent:', result);
   } catch (error) {
-    console.error('SendGrid error:', error);
+    console.error('Mailgun error:', error);
   }
 };
 
@@ -100,6 +103,9 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get email from payer data (in-memory only, not stored in DB for privacy)
+    const customerEmail = payer?.email_address || captureData?.payer?.email_address || null;
+    
     let insertedOrder = null;
     try {
       const total = (cart || []).reduce((sum: number, item: any) => sum + (item.price || 0) * (item.qty || 1), 0);
@@ -108,7 +114,6 @@ Deno.serve(async (req) => {
         .from('orders')
         .insert([{
           paypal_order_id: orderID,
-          customer_email: payer?.email_address || captureData?.payer?.email_address || null,
           user_id: null, // Will be linked when user logs in
           total: total,
           items: cart || [],
@@ -125,10 +130,10 @@ Deno.serve(async (req) => {
       console.error('Supabase insert error:', error);
     }
 
-    // Send confirmation email
-    if (insertedOrder) {
+    // Send confirmation email using in-memory email (not from DB)
+    if (insertedOrder && customerEmail) {
       try {
-        await sendOrderConfirmation(insertedOrder.customer_email, insertedOrder);
+        await sendOrderConfirmation(customerEmail, insertedOrder);
       } catch (error) {
         console.error('Email send error:', error);
       }
