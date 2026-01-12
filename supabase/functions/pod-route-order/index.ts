@@ -47,6 +47,30 @@ Deno.serve(async (req) => {
 
     const order = orderRows[0];
 
+    // Check if order contains only test items - skip Printful for test orders
+    const orderItems = order.items || [];
+    const hasOnlyTestItems = orderItems.every((item: any) => 
+      item.sku?.startsWith('TEST') || item.name?.toLowerCase().includes('test')
+    );
+
+    if (hasOnlyTestItems) {
+      console.log('Test order detected - skipping Printful fulfillment');
+      
+      await supabase
+        .from('orders')
+        .update({
+          pod_provider: 'TEST_SKIP',
+          pod_order_id: 'TEST-NO-FULFILLMENT',
+          pod_status: 'TEST_COMPLETE'
+        })
+        .eq('paypal_order_id', order_id);
+
+      return new Response(
+        JSON.stringify({ ok: true, message: 'Test order - Printful skipped', test: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Build Printful payload
     const pfItems = (order.items || []).map((item: any) => {
       const mapping = SKU_MAPPING[item.sku];
