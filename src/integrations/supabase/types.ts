@@ -17,7 +17,6 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
-          customer_email: string | null
           id: number
           items: Json | null
           paypal_order_id: string | null
@@ -32,7 +31,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          customer_email?: string | null
           id?: number
           items?: Json | null
           paypal_order_id?: string | null
@@ -47,7 +45,6 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          customer_email?: string | null
           id?: number
           items?: Json | null
           paypal_order_id?: string | null
