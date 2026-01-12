@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import { mockInventory } from "@/data/inventory";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { Loader2, ShieldAlert, Package, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { OrdersTable } from "@/components/admin/OrdersTable";
 
 const Admin = () => {
   const { user, loading, isAdmin } = useAuth();
@@ -65,50 +67,47 @@ const Admin = () => {
         >
           <h1 className="text-4xl font-bold mb-8 font-montserrat">Admin Dashboard</h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Inventory */}
-            <Card className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">Inventory</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                Quick view of products (edit functionality coming soon)
-              </p>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {mockInventory.map(item => (
-                  <div
-                    key={item.id}
-                    className="text-sm p-2 border rounded flex justify-between"
-                  >
-                    <span>
-                      {item.sku} — {item.name}
-                    </span>
-                    <span className="text-muted-foreground">Stock: 100</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
+          <Tabs defaultValue="orders" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="orders" className="gap-2">
+                <ShoppingCart className="h-4 w-4" />
+                Orders
+              </TabsTrigger>
+              <TabsTrigger value="inventory" className="gap-2">
+                <Package className="h-4 w-4" />
+                Inventory
+              </TabsTrigger>
+            </TabsList>
 
-            {/* Orders */}
-            <Card className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">Orders</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                Orders will appear here when placed (currently mocked client-side)
-              </p>
-              <div className="space-y-4">
-                <p className="text-sm">
-                  Export CSV / Connect to fulfillment partners from here.
+            <TabsContent value="orders">
+              <Card className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">Order Management</h2>
+                <OrdersTable />
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="inventory">
+              <Card className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">Inventory</h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Quick view of products (edit functionality coming soon)
                 </p>
-                <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-semibold mb-2">Coming Soon:</p>
-                  <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Real-time order tracking</li>
-                    <li>• Inventory management</li>
-                    <li>• Sales analytics</li>
-                    <li>• Customer management</li>
-                  </ul>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {mockInventory.map(item => (
+                    <div
+                      key={item.id}
+                      className="text-sm p-2 border rounded flex justify-between"
+                    >
+                      <span>
+                        {item.sku} — {item.name}
+                      </span>
+                      <span className="text-muted-foreground">Stock: 100</span>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </Card>
-          </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </motion.div>
       </div>
     </div>
