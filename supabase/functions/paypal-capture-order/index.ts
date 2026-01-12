@@ -109,6 +109,7 @@ Deno.serve(async (req) => {
         .insert([{
           paypal_order_id: orderID,
           customer_email: payer?.email_address || captureData?.payer?.email_address || null,
+          user_id: null, // Will be linked when user logs in
           total: total,
           items: cart || [],
           status: 'PAID',
