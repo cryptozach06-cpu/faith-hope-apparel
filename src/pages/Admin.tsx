@@ -80,10 +80,10 @@ const Admin = () => {
             </TabsList>
 
             <TabsContent value="orders">
-              <Card className="p-6">
-                <h2 className="text-2xl font-semibold mb-4">Order Management</h2>
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold">Order Management</h2>
                 <OrdersTable />
-              </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="inventory">
