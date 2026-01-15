@@ -19,6 +19,9 @@ import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import Prayer from "./pages/Prayer";
+import ShippingInfo from "./pages/ShippingInfo";
+import ReturnsExchanges from "./pages/ReturnsExchanges";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +48,9 @@ const App = () => (
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/prayer" element={<Prayer />} />
+                      <Route path="/shipping" element={<ShippingInfo />} />
+                      <Route path="/returns" element={<ReturnsExchanges />} />
+                      <Route path="/faq" element={<FAQ />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/admin" element={<Admin />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

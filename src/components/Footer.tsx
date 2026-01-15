@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Youtube } from "lucide-react";
+import { Instagram, Facebook, Youtube, Music2 } from "lucide-react";
 import logoFooterIcon from "@/assets/logo-footer-icon.png";
 import logoFooterName from "@/assets/logo-footer-name.jpg";
 
@@ -43,9 +43,21 @@ export const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Customer Care</h4>
             <ul className="space-y-2">
-              <li className="text-primary-foreground/80">Shipping Info</li>
-              <li className="text-primary-foreground/80">Returns & Exchanges</li>
-              <li className="text-primary-foreground/80">FAQs</li>
+              <li>
+                <Link to="/shipping" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                  Shipping Info
+                </Link>
+              </li>
+              <li>
+                <Link to="/returns" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                  Returns & Exchanges
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                  FAQs
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -53,14 +65,41 @@ export const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
             <div className="flex space-x-4">
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <a 
+                href="https://www.instagram.com/redeemedwearclothing" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                aria-label="Follow us on Instagram"
+              >
                 <Instagram className="h-6 w-6" />
               </a>
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <a 
+                href="https://www.facebook.com/redeemedwearclothing" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                aria-label="Follow us on Facebook"
+              >
                 <Facebook className="h-6 w-6" />
               </a>
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <a 
+                href="https://www.youtube.com/@redeemedwearclothing" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                aria-label="Subscribe to our YouTube channel"
+              >
                 <Youtube className="h-6 w-6" />
+              </a>
+              <a 
+                href="https://www.tiktok.com/@redeemedwearclothing" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                aria-label="Follow us on TikTok"
+              >
+                <Music2 className="h-6 w-6" />
               </a>
             </div>
           </div>
