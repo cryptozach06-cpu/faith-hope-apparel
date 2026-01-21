@@ -1,7 +1,23 @@
+import { z } from 'zod';
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schemas
+const CartItemSchema = z.object({
+  sku: z.string().max(50).optional(),
+  name: z.string().max(200),
+  price: z.number().positive().max(10000),
+  qty: z.number().int().positive().max(100).default(1),
+});
+
+const CreateOrderSchema = z.object({
+  cart: z.array(CartItemSchema).min(1).max(50),
+  return_url: z.string().url().max(500).optional(),
+  cancel_url: z.string().url().max(500).optional(),
+});
 
 const getAccessToken = async () => {
   const clientId = Deno.env.get('PAYPAL_CLIENT_ID');
@@ -35,16 +51,38 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { cart, return_url, cancel_url } = await req.json();
-    
-    if (!cart || !Array.isArray(cart) || cart.length === 0) {
+    // Check content length to prevent oversized payloads
+    const contentLength = req.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 50000) {
       return new Response(
-        JSON.stringify({ error: 'Cart required' }),
+        JSON.stringify({ error: 'Payload too large' }),
+        { status: 413, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON body' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const total = cart.reduce((sum: number, item: any) => sum + (item.price || 0) * (item.qty || 1), 0).toFixed(2);
+    // Validate input with zod
+    const parseResult = CreateOrderSchema.safeParse(body);
+    if (!parseResult.success) {
+      console.log('Validation failed:', parseResult.error.errors);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request data', details: parseResult.error.errors }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { cart, return_url, cancel_url } = parseResult.data;
+
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2);
     const token = await getAccessToken();
     const apiBase = Deno.env.get('PAYPAL_API') || 'https://api-m.sandbox.paypal.com';
     const publicUrl = Deno.env.get('PUBLIC_URL') || 'https://redeemedwearclothing.com';
@@ -59,10 +97,10 @@ Deno.serve(async (req) => {
             item_total: { currency_code: 'USD', value: total }
           }
         },
-        items: cart.map((item: any) => ({
-          name: item.name,
-          unit_amount: { currency_code: 'USD', value: (item.price || 0).toFixed(2) },
-          quantity: (item.qty || 1).toString()
+        items: cart.map((item) => ({
+          name: item.name.substring(0, 127), // PayPal name limit
+          unit_amount: { currency_code: 'USD', value: item.price.toFixed(2) },
+          quantity: item.qty.toString()
         }))
       }],
       application_context: {
@@ -81,7 +119,7 @@ Deno.serve(async (req) => {
     });
 
     const data = await response.json();
-    console.log('PayPal order created:', data);
+    console.log('PayPal order created:', data.id);
 
     return new Response(
       JSON.stringify(data),
@@ -91,7 +129,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Create PayPal order error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'Failed to create order' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
