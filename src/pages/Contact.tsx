@@ -8,6 +8,19 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Escapes HTML special characters to prevent XSS attacks.
+ * Use this function for any user-provided data that will be included in HTML.
+ */
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,19 +33,31 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    // Validate input lengths for security
+    if (formData.name.length > 100 || formData.email.length > 255 || formData.message.length > 5000) {
+      toast.error("Input exceeds maximum length. Please shorten your message.");
+      setIsSubmitting(false);
+      return;
+    }
+    
     try {
+      // Sanitize all user inputs before including in HTML email
+      const safeName = escapeHtml(formData.name.trim());
+      const safeEmail = escapeHtml(formData.email.trim());
+      const safeMessage = escapeHtml(formData.message.trim());
+      
       const { data, error } = await supabase.functions.invoke('send-email-mailgun', {
         body: {
           to: 'info.destinyinc@gmail.com',
-          subject: `Contact Form: ${formData.name}`,
+          subject: `Contact Form: ${safeName}`,
           html: `
             <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${formData.name}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
+            <p><strong>Name:</strong> ${safeName}</p>
+            <p><strong>Email:</strong> ${safeEmail}</p>
             <p><strong>Message:</strong></p>
-            <p>${formData.message.replace(/\n/g, '<br>')}</p>
+            <p>${safeMessage.replace(/\n/g, '<br>')}</p>
           `,
-          text: `Name: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`
+          text: `Name: ${formData.name.trim()}\nEmail: ${formData.email.trim()}\nMessage: ${formData.message.trim()}`
         }
       });
       

@@ -65,7 +65,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      // Handle expired/invalid refresh tokens gracefully - just clear the session
+      if (error) {
+        console.warn('Session retrieval error (this is normal if not logged in):', error.message);
+        setSession(null);
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -73,6 +82,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (session?.user) {
         fetchUserRoles(session.user.id).then(setRoles);
       }
+    }).catch((error) => {
+      // Catch any uncaught errors to prevent console errors
+      console.warn('Auth initialization error:', error?.message || error);
+      setSession(null);
+      setUser(null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
