@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { mockInventory } from "@/data/inventory";
+import { useProducts } from "@/contexts/ProductContext";
 import { useCart } from "@/contexts/CartContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { FALLBACK_IMAGE } from "@/data/inventory";
+import { Loader2 } from "lucide-react";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -13,12 +15,29 @@ const ProductDetail = () => {
   const { toast } = useToast();
   const { addToCart } = useCart();
   const { formatPrice } = useCurrency();
+  const { getProductById, loading } = useProducts();
   
-  const product = mockInventory.find(p => p.id === Number(id));
-  const [size, setSize] = useState(product?.sizes?.[0] || "");
-  const [color, setColor] = useState(product?.colors?.[0] || "");
+  const product = getProductById(Number(id));
+  const [size, setSize] = useState("");
+  const [color, setColor] = useState("");
   const [qty, setQty] = useState(1);
   const [mainImage, setMainImage] = useState(0);
+
+  // Set initial size and color when product loads
+  useEffect(() => {
+    if (product) {
+      setSize(product.sizes?.[0] || "");
+      setColor(product.colors?.[0] || "");
+    }
+  }, [product]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen py-16 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -32,11 +51,29 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
-    addToCart(product, { size, color, qty });
+    // Convert ManagedProduct to Product format for cart
+    const cartProduct = {
+      id: product.id,
+      sku: product.sku,
+      category: product.category,
+      name: product.name,
+      price_usd: product.price_usd,
+      price_php: product.price_php,
+      sizes: product.sizes,
+      colors: product.colors,
+      images: product.images,
+      description: product.description,
+    };
+    
+    addToCart(cartProduct, { size, color, qty });
     toast({
       title: "Added to cart",
       description: `${qty}x ${product.name} (${size}, ${color})`,
     });
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = FALLBACK_IMAGE;
   };
 
   return (
@@ -50,26 +87,30 @@ const ProductDetail = () => {
         >
           {/* Image Gallery */}
           <div>
-            <div className="rounded-lg overflow-hidden mb-4">
+            <div className="rounded-lg overflow-hidden mb-4 bg-muted">
               <img
-                src={product.images[mainImage]}
+                src={product.images[mainImage] || FALLBACK_IMAGE}
                 alt={product.name}
                 className="w-full object-cover aspect-square"
+                onError={handleImageError}
               />
             </div>
-            <div className="flex gap-3">
-              {product.images.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt={`${product.name} ${i + 1}`}
-                  className={`w-20 h-20 object-cover rounded cursor-pointer transition ${
-                    mainImage === i ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100"
-                  }`}
-                  onClick={() => setMainImage(i)}
-                />
-              ))}
-            </div>
+            {product.images.length > 1 && (
+              <div className="flex gap-3">
+                {product.images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img}
+                    alt={`${product.name} ${i + 1}`}
+                    className={`w-20 h-20 object-cover rounded cursor-pointer transition ${
+                      mainImage === i ? "ring-2 ring-primary" : "opacity-60 hover:opacity-100"
+                    }`}
+                    onClick={() => setMainImage(i)}
+                    onError={handleImageError}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
@@ -79,44 +120,48 @@ const ProductDetail = () => {
             <p className="text-muted-foreground mb-6 font-inter">{product.description}</p>
 
             {/* Size Selection */}
-            <div className="mb-6">
-              <label className="block mb-2 font-semibold">Size</label>
-              <div className="flex gap-2">
-                {product.sizes.map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setSize(s)}
-                    className={`px-4 py-2 border rounded-lg transition ${
-                      size === s
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "hover:border-primary"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+            {product.sizes.length > 0 && (
+              <div className="mb-6">
+                <label className="block mb-2 font-semibold">Size</label>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map(s => (
+                    <button
+                      key={s}
+                      onClick={() => setSize(s)}
+                      className={`px-4 py-2 border rounded-lg transition ${
+                        size === s
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "hover:border-primary"
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Color Selection */}
-            <div className="mb-6">
-              <label className="block mb-2 font-semibold">Color</label>
-              <div className="flex gap-2">
-                {product.colors.map(c => (
-                  <button
-                    key={c}
-                    onClick={() => setColor(c)}
-                    className={`px-4 py-2 border rounded-lg transition ${
-                      color === c
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "hover:border-primary"
-                    }`}
-                  >
-                    {c}
-                  </button>
-                ))}
+            {product.colors.length > 0 && (
+              <div className="mb-6">
+                <label className="block mb-2 font-semibold">Color</label>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map(c => (
+                    <button
+                      key={c}
+                      onClick={() => setColor(c)}
+                      className={`px-4 py-2 border rounded-lg transition ${
+                        color === c
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "hover:border-primary"
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div className="mb-6">
@@ -125,8 +170,8 @@ const ProductDetail = () => {
                 type="number"
                 min={1}
                 value={qty}
-                onChange={e => setQty(Number(e.target.value))}
-                className="w-24 border rounded-lg px-3 py-2"
+                onChange={e => setQty(Math.max(1, Number(e.target.value)))}
+                className="w-24 border rounded-lg px-3 py-2 bg-background"
               />
             </div>
 

@@ -4,11 +4,12 @@ import { ProductCard } from "@/components/ProductCard";
 import { Card } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { mockInventory } from "@/data/inventory";
+import { useProducts } from "@/contexts/ProductContext";
 
 const Home = () => {
   const navigate = useNavigate();
-  const featuredProducts = mockInventory.slice(0, 4);
+  const { products } = useProducts();
+  const featuredProducts = products.slice(0, 4);
 
   const collections = [
     {
@@ -121,16 +122,22 @@ const Home = () => {
             <p className="text-xl text-muted-foreground font-inter">Premium streetwear with purpose</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                index={index}
-                onClick={() => navigate(`/product/${product.id}`)}
-              />
-            ))}
-          </div>
+          {featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {featuredProducts.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  onClick={() => navigate(`/product/${product.id}`)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Products loading...</p>
+            </div>
+          )}
 
           <motion.div
             initial={{ opacity: 0 }}
