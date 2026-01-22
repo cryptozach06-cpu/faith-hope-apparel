@@ -1,23 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { mockInventory } from "@/data/inventory";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2, ShieldAlert, Package, ShoppingCart } from "lucide-react";
+import { Loader2, ShieldAlert, LayoutDashboard, Package, ShoppingCart, Truck, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTable } from "@/components/admin/OrdersTable";
+import { AdminOverview } from "@/components/admin/AdminOverview";
+import { ProductsManager } from "@/components/admin/ProductsManager";
+import { ShippingEditor } from "@/components/admin/ShippingEditor";
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
+
+type AdminTab = 'overview' | 'products' | 'orders' | 'shipping';
+
+const navItems = [
+  { id: 'overview' as AdminTab, label: 'Overview', icon: LayoutDashboard },
+  { id: 'products' as AdminTab, label: 'Products', icon: Package },
+  { id: 'orders' as AdminTab, label: 'Orders', icon: ShoppingCart },
+  { id: 'shipping' as AdminTab, label: 'Shipping', icon: Truck },
+];
 
 const Admin = () => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
 
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
     }
   }, [user, loading, navigate]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   if (loading) {
     return (
@@ -57,58 +74,81 @@ const Admin = () => {
     );
   }
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <AdminOverview />;
+      case 'products':
+        return <ProductsManager />;
+      case 'orders':
+        return <OrdersTable />;
+      case 'shipping':
+        return <ShippingEditor />;
+      default:
+        return <AdminOverview />;
+    }
+  };
+
   return (
-    <div className="min-h-screen py-16">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="text-4xl font-bold mb-8 font-montserrat">Admin Dashboard</h1>
+    <div className="min-h-screen bg-muted/30">
+      <div className="flex">
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:flex flex-col w-64 min-h-screen bg-background border-r">
+          <div className="p-6 border-b">
+            <h1 className="text-xl font-bold font-montserrat">Admin Dashboard</h1>
+            <p className="text-sm text-muted-foreground mt-1">Manage your store</p>
+          </div>
 
-          <Tabs defaultValue="orders" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="orders" className="gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                Orders
-              </TabsTrigger>
-              <TabsTrigger value="inventory" className="gap-2">
-                <Package className="h-4 w-4" />
-                Inventory
-              </TabsTrigger>
-            </TabsList>
+          <nav className="flex-1 p-4 space-y-1">
+            {navItems.map((item) => (
+              <Button
+                key={item.id}
+                variant={activeTab === item.id ? 'secondary' : 'ghost'}
+                className="w-full justify-start gap-3"
+                onClick={() => setActiveTab(item.id)}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Button>
+            ))}
+          </nav>
 
-            <TabsContent value="orders">
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold">Order Management</h2>
-                <OrdersTable />
-              </div>
-            </TabsContent>
+          <div className="p-4 border-t">
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </aside>
 
-            <TabsContent value="inventory">
-              <Card className="p-6">
-                <h2 className="text-2xl font-semibold mb-4">Inventory</h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Quick view of products (edit functionality coming soon)
-                </p>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {mockInventory.map(item => (
-                    <div
-                      key={item.id}
-                      className="text-sm p-2 border rounded flex justify-between"
-                    >
-                      <span>
-                        {item.sku} — {item.name}
-                      </span>
-                      <span className="text-muted-foreground">Stock: 100</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </motion.div>
+        {/* Main Content */}
+        <main className="flex-1 min-h-screen">
+          {/* Mobile Header */}
+          <header className="md:hidden flex items-center justify-between p-4 border-b bg-background">
+            <h1 className="text-lg font-bold">Admin</h1>
+            <AdminMobileNav
+              activeTab={activeTab}
+              onTabChange={(tab) => setActiveTab(tab as AdminTab)}
+              onSignOut={handleSignOut}
+            />
+          </header>
+
+          {/* Page Content */}
+          <div className="p-4 md:p-8">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {renderContent()}
+            </motion.div>
+          </div>
+        </main>
       </div>
     </div>
   );

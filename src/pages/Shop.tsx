@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/ProductCard";
-import { mockInventory, getProductsByCategory, PRODUCT_CATEGORIES } from "@/data/inventory";
+import { useProducts } from "@/contexts/ProductContext";
+import { PRODUCT_CATEGORIES } from "@/data/inventory";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 const Shop = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
+  const { products, loading, getProductsByCategory } = useProducts();
   
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   
@@ -19,11 +22,19 @@ const Shop = () => {
     }
   }, [categoryParam]);
   
-  // Get filtered products using the helper function
+  // Get filtered products using the context
   const filteredProducts = getProductsByCategory(selectedCategory);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen py-16 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   // If no products available, show a friendly message
-  if (mockInventory.length === 0) {
+  if (products.length === 0) {
     return (
       <div className="min-h-screen py-16">
         <div className="container mx-auto px-4 text-center">

@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { CartProvider } from "./contexts/CartContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ProductProvider } from "./contexts/ProductContext";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import Home from "./pages/Home";
@@ -30,9 +31,10 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light">
       <AuthProvider>
-        <CurrencyProvider>
-          <CartProvider>
-            <TooltipProvider>
+        <ProductProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              <TooltipProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -60,9 +62,10 @@ const App = () => (
                   <Footer />
                 </div>
               </BrowserRouter>
-            </TooltipProvider>
-          </CartProvider>
-        </CurrencyProvider>
+              </TooltipProvider>
+            </CartProvider>
+          </CurrencyProvider>
+        </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
