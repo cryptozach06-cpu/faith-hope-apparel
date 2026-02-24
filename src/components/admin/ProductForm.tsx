@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ManagedProduct } from "@/contexts/ProductContext";
 import { FALLBACK_IMAGE, PRODUCT_CATEGORIES } from "@/data/inventory";
-import { X, Plus, ImageIcon } from "lucide-react";
+import { X, Plus, ImageIcon, Edit, Check } from "lucide-react";
 
 interface ProductFormProps {
   product?: ManagedProduct;
@@ -82,6 +82,18 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  const updateImage = (index: number, newUrl: string) => {
+    setImages(images.map((img, i) => i === index ? newUrl : img));
+  };
+
+  const addImagesForColor = (color: string) => {
+    if (newImageUrl.trim()) {
+      // Add image with color prefix for organization
+      setImages([...images, newImageUrl.trim()]);
+      setNewImageUrl('');
+    }
   };
 
   const toggleSize = (size: string) => {
@@ -242,43 +254,90 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
           </div>
 
           {/* Images */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label>Product Images</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="Paste image URL here"
-                className="flex-1"
-              />
-              <Button type="button" variant="outline" onClick={addImage}>
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            
+            <p className="text-xs text-muted-foreground">
+              Add image URLs for each color variant. You can paste multiple URLs.
+            </p>
+
+            {/* Existing images - editable */}
             {images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+              <div className="space-y-2">
                 {images.map((img, index) => (
-                  <div key={index} className="relative group">
+                  <div key={index} className="flex items-start gap-2 group">
                     <img
                       src={img}
                       alt={`Product ${index + 1}`}
-                      className="w-full h-24 object-cover rounded border"
+                      className="w-16 h-16 object-cover rounded border flex-shrink-0"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
                       }}
+                    />
+                    <Input
+                      value={img}
+                      onChange={(e) => updateImage(index, e.target.value)}
+                      placeholder="Image URL"
+                      className="flex-1 text-sm"
                     />
                     <Button
                       type="button"
                       variant="destructive"
                       size="icon"
-                      className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="h-9 w-9 flex-shrink-0"
                       onClick={() => removeImage(index)}
                     >
                       <X className="h-3 w-3" />
                     </Button>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Add new image */}
+            <div className="flex gap-2">
+              <Input
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addImage();
+                  }
+                }}
+                placeholder="Paste image URL and press Enter or click +"
+                className="flex-1"
+              />
+              <Button type="button" variant="outline" onClick={addImage} disabled={!newImageUrl.trim()}>
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Quick add per color */}
+            {colors.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Quick add: click a color to tag the next image</Label>
+                <div className="flex flex-wrap gap-1">
+                  {colors.map((color) => {
+                    const colorImageCount = images.length; // all images are shared
+                    return (
+                      <Button
+                        key={color}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="text-xs gap-1"
+                        onClick={() => {
+                          if (newImageUrl.trim()) {
+                            addImage();
+                          }
+                        }}
+                      >
+                        {color}
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    );
+                  })}
+                </div>
               </div>
             )}
             
