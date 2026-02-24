@@ -82,14 +82,16 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
         console.warn('Supabase fetch failed, using static inventory:', supabaseError);
         setUseSupabase(false);
         setProducts(mockInventory.map(convertToManagedProduct));
-      } else if (data && data.length > 0) {
-        setUseSupabase(true);
-        setProducts(data.map(convertSupabaseProduct));
       } else {
-        // No products in Supabase, use static inventory
-        console.info('No products in Supabase, using static inventory');
-        setUseSupabase(false);
-        setProducts(mockInventory.map(convertToManagedProduct));
+        // Supabase is reachable — always use it for writes
+        setUseSupabase(true);
+        if (data && data.length > 0) {
+          setProducts(data.map(convertSupabaseProduct));
+        } else {
+          // No products yet in DB, show static inventory as read-only preview
+          console.info('No products in DB yet, showing static inventory preview');
+          setProducts(mockInventory.map(convertToManagedProduct));
+        }
       }
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -126,7 +128,8 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
         if (insertError) throw insertError;
 
         if (data) {
-          setProducts(prev => [...prev, convertSupabaseProduct(data)]);
+          // Refresh all products to get accurate state
+          await fetchProducts();
           toast({ title: 'Product added successfully!' });
           return true;
         }
@@ -163,7 +166,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
 
         if (updateError) throw updateError;
 
-        setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+        await fetchProducts();
         toast({ title: 'Product updated successfully!' });
         return true;
       } else {
