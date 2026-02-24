@@ -264,7 +264,7 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
             {images.length > 0 && (
               <div className="space-y-2">
                 {images.map((img, index) => (
-                  <div key={index} className="flex items-start gap-2 group">
+                  <div key={`${index}-${img}`} className="flex items-start gap-2 group">
                     <img
                       src={img}
                       alt={`Product ${index + 1}`}
