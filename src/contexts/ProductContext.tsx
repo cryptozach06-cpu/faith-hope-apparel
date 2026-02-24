@@ -151,23 +151,48 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
   const updateProduct = async (id: number, updates: Partial<ManagedProduct>): Promise<boolean> => {
     try {
       if (useSupabase) {
-        const { error: updateError } = await supabase
+        // Check if product actually exists in DB
+        const { data: existing } = await supabase
           .from('products')
-          .update({
-            name: updates.name,
-            category: updates.category,
-            price_usd: updates.price_usd,
-            sku: updates.sku,
-            images: updates.images,
-            description: updates.description,
-            stock: updates.stock,
-          })
-          .eq('id', id);
+          .select('id')
+          .eq('id', id)
+          .maybeSingle();
 
-        if (updateError) throw updateError;
+        if (existing) {
+          // Product exists in DB — update it
+          const { error: updateError } = await supabase
+            .from('products')
+            .update({
+              name: updates.name,
+              category: updates.category,
+              price_usd: updates.price_usd,
+              sku: updates.sku,
+              images: updates.images,
+              description: updates.description,
+              stock: updates.stock,
+            })
+            .eq('id', id);
+
+          if (updateError) throw updateError;
+        } else {
+          // Product is a static preview — insert as new DB product
+          const { error: insertError } = await supabase
+            .from('products')
+            .insert({
+              name: updates.name,
+              category: updates.category,
+              price_usd: updates.price_usd,
+              sku: updates.sku,
+              images: updates.images,
+              description: updates.description,
+              stock: updates.stock || 0,
+            });
+
+          if (insertError) throw insertError;
+        }
 
         await fetchProducts();
-        toast({ title: 'Product updated successfully!' });
+        toast({ title: 'Product saved successfully!' });
         return true;
       } else {
         // Local mode
