@@ -35,7 +35,7 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
 
   // Auto-calculate PHP price when USD changes
   useEffect(() => {
-    const usdValue = parseFloat(priceUsd);
+    const usdValue = parseFloat(priceUsd.replace(/,/g, ''));
     if (!isNaN(usdValue) && usdValue > 0) {
       setPricePhp(Math.round(usdValue * 56).toString());
     }
@@ -46,7 +46,7 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
 
     if (!name.trim()) newErrors.name = 'Product name is required';
     if (!category) newErrors.category = 'Category is required';
-    if (!priceUsd || parseFloat(priceUsd) <= 0) newErrors.priceUsd = 'Valid price is required';
+    if (!priceUsd || isNaN(parseFloat(priceUsd.replace(/,/g, ''))) || parseFloat(priceUsd.replace(/,/g, '')) <= 0) newErrors.priceUsd = 'Valid price is required';
     if (sizes.length === 0) newErrors.sizes = 'At least one size is required';
     if (colors.length === 0) newErrors.colors = 'At least one color is required';
 
@@ -63,8 +63,8 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
       name: name.trim(),
       sku: sku.trim() || `SKU${Date.now()}`,
       category,
-      price_usd: parseFloat(priceUsd),
-      price_php: parseInt(pricePhp) || Math.round(parseFloat(priceUsd) * 56),
+      price_usd: parseFloat(parseFloat(priceUsd.replace(/,/g, '')).toFixed(2)),
+      price_php: parseInt(pricePhp) || Math.round(parseFloat(priceUsd.replace(/,/g, '')) * 56),
       description: description.trim(),
       images: images.length > 0 ? images : [FALLBACK_IMAGE],
       sizes,
