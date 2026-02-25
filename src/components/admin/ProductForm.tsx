@@ -17,7 +17,7 @@ interface ProductFormProps {
 }
 
 const DEFAULT_SIZES = ['S', 'M', 'L', 'XL', '2XL'];
-const DEFAULT_COLORS = ['Black', 'White', 'Navy', 'Sand', 'Olive', 'Maroon', 'Heather Gray'];
+const DEFAULT_COLORS = ['Black', 'White', 'Navy', 'Sand', 'Olive', 'Maroon', 'Grey', 'Cream', 'Heather Gray'];
 
 export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductFormProps) => {
   const [name, setName] = useState(product?.name || '');

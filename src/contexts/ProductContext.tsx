@@ -52,9 +52,9 @@ const convertSupabaseProduct = (dbProduct: any): ManagedProduct => ({
   category: dbProduct.category,
   name: dbProduct.name,
   price_usd: Number(dbProduct.price_usd) || 0,
-  price_php: Math.round((Number(dbProduct.price_usd) || 0) * 56), // Approximate PHP conversion
-  sizes: ['S', 'M', 'L', 'XL'], // Default sizes
-  colors: ['Black', 'White'], // Default colors
+  price_php: Number(dbProduct.price_php) || Math.round((Number(dbProduct.price_usd) || 0) * 56),
+  sizes: Array.isArray(dbProduct.sizes) && dbProduct.sizes.length > 0 ? dbProduct.sizes : ['S', 'M', 'L', 'XL'],
+  colors: Array.isArray(dbProduct.colors) && dbProduct.colors.length > 0 ? dbProduct.colors : ['Black', 'White'],
   images: dbProduct.images?.length > 0 ? dbProduct.images : [FALLBACK_IMAGE],
   description: dbProduct.description || 'No description available.',
   stock: dbProduct.stock || 0,
@@ -73,9 +73,9 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       // Try to fetch from Supabase first
-      const { data, error: supabaseError } = await supabase
+        const { data, error: supabaseError } = await supabase
         .from('products')
-        .select('*')
+        .select('id, name, category, price_usd, price_php, sku, images, description, stock, colors, sizes')
         .order('id', { ascending: true });
 
       if (supabaseError) {
@@ -117,10 +117,13 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
             name: product.name,
             category: product.category,
             price_usd: product.price_usd,
+            price_php: product.price_php,
             sku: product.sku,
             images: product.images,
             description: product.description,
             stock: product.stock || 0,
+            colors: product.colors,
+            sizes: product.sizes,
           })
           .select()
           .single();
@@ -166,10 +169,13 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
               name: updates.name,
               category: updates.category,
               price_usd: updates.price_usd,
+              price_php: updates.price_php,
               sku: updates.sku,
               images: updates.images,
               description: updates.description,
               stock: updates.stock,
+              colors: updates.colors,
+              sizes: updates.sizes,
             })
             .eq('id', id);
 
@@ -182,10 +188,13 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
               name: updates.name,
               category: updates.category,
               price_usd: updates.price_usd,
+              price_php: updates.price_php,
               sku: updates.sku,
               images: updates.images,
               description: updates.description,
               stock: updates.stock || 0,
+              colors: updates.colors,
+              sizes: updates.sizes,
             });
 
           if (insertError) throw insertError;

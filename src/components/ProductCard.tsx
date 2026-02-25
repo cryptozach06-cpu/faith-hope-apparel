@@ -33,7 +33,7 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
           <img
             src={imageSrc}
             alt={product.name || "Product image"}
-            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
             loading="lazy"
           />
