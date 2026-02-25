@@ -140,7 +140,7 @@ const rawInventory: Partial<Product>[] = [
     price_usd: 24.99, 
     price_php: 1390, 
     sizes: ["S","M","L","XL"], 
-    colors: ["White","Heather Gray"], 
+    colors: ["White","Grey","Cream"], 
     images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=800&fit=crop"], 
     description: "Typographic design reminding believers to be still." 
   },
