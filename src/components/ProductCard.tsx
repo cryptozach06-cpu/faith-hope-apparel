@@ -29,11 +29,11 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
         className="overflow-hidden group hover:shadow-xl transition-all duration-300 cursor-pointer"
         onClick={onClick}
       >
-        <div className="relative overflow-hidden bg-muted">
+        <div className="relative overflow-hidden bg-muted aspect-square">
           <img
             src={imageSrc}
             alt={product.name || "Product image"}
-            className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
             loading="lazy"
           />
