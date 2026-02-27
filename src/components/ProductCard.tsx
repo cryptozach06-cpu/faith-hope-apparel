@@ -15,9 +15,16 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
   const [imageError, setImageError] = useState(false);
   
   // Use the first image, or fallback if it's missing or failed to load
-  const imageSrc = imageError || !product.images?.[0] 
-    ? FALLBACK_IMAGE 
+  const imageSrc = imageError || !product.images?.[0]
+    ? FALLBACK_IMAGE
     : product.images[0];
+
+  // Some source images include large built-in whitespace; tighten visual crop for consistency
+  const isBornReady = /born\s*ready/i.test(product.name || "");
+  const imageClassName = [
+    "absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300",
+    isBornReady ? "scale-110 group-hover:scale-[1.14]" : "group-hover:scale-105",
+  ].join(" ");
   
   return (
     <motion.div
@@ -33,7 +40,7 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
           <img
             src={imageSrc}
             alt={product.name || "Product image"}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className={imageClassName}
             onError={() => setImageError(true)}
             loading="lazy"
           />
