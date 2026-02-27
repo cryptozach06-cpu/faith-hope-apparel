@@ -23,7 +23,9 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
   const isBornReady = /born\s*ready/i.test(product.name || "");
   const imageClassName = [
     "absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300",
-    isBornReady ? "scale-105 group-hover:scale-110" : "group-hover:scale-105",
+    isBornReady
+      ? "object-[center_28%] scale-[1.18] group-hover:scale-[1.22]"
+      : "group-hover:scale-105",
   ].join(" ");
   
   return (
@@ -33,7 +35,7 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
       transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.5) }}
     >
       <Card 
-        className="overflow-hidden group hover:shadow-xl transition-all duration-300 cursor-pointer"
+        className="h-full overflow-hidden group hover:shadow-xl transition-all duration-300 cursor-pointer"
         onClick={onClick}
       >
         <div className="relative overflow-hidden bg-muted aspect-square">
@@ -46,7 +48,7 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
           />
         </div>
         <div className="p-6 space-y-2">
-          <h3 className="text-xl font-semibold text-foreground">{product.name || "Unnamed Product"}</h3>
+          <h3 className="min-h-[3.5rem] text-xl font-semibold leading-snug text-foreground">{product.name || "Unnamed Product"}</h3>
           <p className="text-sm text-muted-foreground">{product.category || "Uncategorized"}</p>
           <p className="text-2xl font-bold text-accent">
             {formatPrice(typeof product.price_usd === 'number' ? product.price_usd : 0)}
