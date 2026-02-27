@@ -23,7 +23,7 @@ export const ProductCard = ({ product, index = 0, onClick }: ProductCardProps) =
   const isBornReady = /born\s*ready/i.test(product.name || "");
   const imageClassName = [
     "absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300",
-    isBornReady ? "scale-110 group-hover:scale-[1.14]" : "group-hover:scale-105",
+    isBornReady ? "scale-105 group-hover:scale-110" : "group-hover:scale-105",
   ].join(" ");
   
   return (
